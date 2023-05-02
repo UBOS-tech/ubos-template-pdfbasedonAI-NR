@@ -2,7 +2,9 @@
     "name": "pdfAI",
     "description": "A Node-RED Project",
     "version": "0.0.1",
-    "dependencies": {},
+    "dependencies": {
+        "node-red-contrib-pdfmake": "1.1.0"
+    },
     "node-red": {
         "settings": {
             "flowFile": "flow.json",

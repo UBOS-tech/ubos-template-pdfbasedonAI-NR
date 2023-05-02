@@ -1,1 +1,285 @@
-[]
+[
+    {
+        "id": "bf5c8f3b49216825",
+        "type": "tab",
+        "label": "ENV",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5612d3dae22d78b8",
+        "type": "group",
+        "z": "bf5c8f3b49216825",
+        "name": "Global",
+        "style": {
+            "stroke": "#92d04f",
+            "label": true
+        },
+        "nodes": [
+            "bf3324c4df8120cc",
+            "e971752f4e86f0b9"
+        ],
+        "x": 14,
+        "y": 39,
+        "w": 472,
+        "h": 82
+    },
+    {
+        "id": "ec0ad3e589028992",
+        "type": "group",
+        "z": "bf5c8f3b49216825",
+        "name": "Logic",
+        "style": {
+            "stroke": "#0070c0",
+            "label": true
+        },
+        "nodes": [
+            "378f266fba01cdb8",
+            "7408b5aab9b40b65",
+            "6a217787f607551c",
+            "e552485cdaddee1a",
+            "d7377d3f41f64884",
+            "ef81d9a1b6f3c034",
+            "8ebf84e0f7cf8bbe",
+            "c3dc3bf26b7d617f",
+            "bf1802ad6d2bdc54",
+            "0d69c306b87da362"
+        ],
+        "x": 14,
+        "y": 159,
+        "w": 912,
+        "h": 162
+    },
+    {
+        "id": "bf3324c4df8120cc",
+        "type": "inject",
+        "z": "bf5c8f3b49216825",
+        "g": "5612d3dae22d78b8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 80,
+        "wires": [
+            [
+                "e971752f4e86f0b9"
+            ]
+        ]
+    },
+    {
+        "id": "e971752f4e86f0b9",
+        "type": "function",
+        "z": "bf5c8f3b49216825",
+        "g": "5612d3dae22d78b8",
+        "name": "ENV",
+        "func": "let process_env = {\n    OPENAI_API: \"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\",\n \n}\n\nglobal.set(\"process_env\", process_env)\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "378f266fba01cdb8",
+        "type": "function",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "congid pdf",
+        "func": "msg.payload = {\n    content: [\n        {\n            text: `${global.get(`pdf${msg.payload.timestamp}`)}`,\n            style: 'mainTitle',\n            margin: [0, 20, 0, 0]\n        }\n    ],\n    styles: {\n        mainTitle: {\n            fontSize: 20,\n            alignment: 'center',\n            bold: false,\n            margin: [0, 0, 0, 10]\n        },\n        subheader: {\n            fontSize: 16,\n            alignment: 'center',\n            margin: [0, 0, 0, 5]\n        }\n    }\n}\n\nreturn msg\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 200,
+        "wires": [
+            [
+                "e552485cdaddee1a"
+            ]
+        ]
+    },
+    {
+        "id": "7408b5aab9b40b65",
+        "type": "http response",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 850,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "6a217787f607551c",
+        "type": "function",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "response",
+        "func": "msg.headers = {\n    'Content-Disposition': `attachment; filename= \"chat.pdf\"`,\n    'Content-Type': 'application/pdf'\n}\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 200,
+        "wires": [
+            [
+                "7408b5aab9b40b65"
+            ]
+        ]
+    },
+    {
+        "id": "d7377d3f41f64884",
+        "type": "http in",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "",
+        "url": "/sendToAI",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 280,
+        "wires": [
+            [
+                "ef81d9a1b6f3c034"
+            ]
+        ]
+    },
+    {
+        "id": "ef81d9a1b6f3c034",
+        "type": "function",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "config OpenAI",
+        "func": "const api_key = global.get('process_env').OPENAI_API\nconst content = ` I am a business owner interested in exploring how ${msg.payload.technology} can be used to improve ${msg.payload.industry} What to ${msg.payload.improve}. I am looking for a clear and concise explanation of the ${msg.payload.technology} and examples of how it has been used in the context of ${msg.payload.industry} management. Can you explain the concept of ${msg.payload.technology} and its potential applications in ${msg.payload.industry} management?`;\n\n//OpenAI API properties\nmsg.url = 'https://api.openai.com/v1/completions';\nmsg.headers = {\n    'Content-Type': 'application/json',\n    'Authorization': `Bearer ${api_key}`\n};\n\nmsg.payload = {\n    model: \"text-davinci-003\",\n    prompt: content,\n    temperature: 0.3,\n    max_tokens: 1000,\n    top_p: 1.0,\n    frequency_penalty: 0.0,\n    presence_penalty: 0.0\n};\n\nmsg.settings = msg.payload;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 280,
+        "wires": [
+            [
+                "8ebf84e0f7cf8bbe"
+            ]
+        ]
+    },
+    {
+        "id": "8ebf84e0f7cf8bbe",
+        "type": "http request",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "OpenAI ",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 520,
+        "y": 280,
+        "wires": [
+            [
+                "c3dc3bf26b7d617f"
+            ]
+        ]
+    },
+    {
+        "id": "c3dc3bf26b7d617f",
+        "type": "function",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "response",
+        "func": "\nlet res = msg.payload.choices[0].text\nlet timestamp= Date.now()\n\nmsg.payload = {\n    text: res,\n    timestamp: timestamp\n\n}\nglobal.set(`pdf${timestamp}`, res)\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 280,
+        "wires": [
+            [
+                "bf1802ad6d2bdc54"
+            ]
+        ]
+    },
+    {
+        "id": "bf1802ad6d2bdc54",
+        "type": "http response",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 850,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "0d69c306b87da362",
+        "type": "http in",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "",
+        "url": "/generatePDF",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "378f266fba01cdb8"
+            ]
+        ]
+    },
+    {
+        "id": "e552485cdaddee1a",
+        "type": "pdfmake",
+        "z": "bf5c8f3b49216825",
+        "g": "ec0ad3e589028992",
+        "name": "",
+        "outputType": "Buffer",
+        "inputProperty": "payload",
+        "options": "{}",
+        "outputProperty": "payload",
+        "x": 520,
+        "y": 200,
+        "wires": [
+            [
+                "6a217787f607551c"
+            ]
+        ]
+    }
+]
