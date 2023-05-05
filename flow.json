@@ -87,7 +87,7 @@
         "z": "bf5c8f3b49216825",
         "g": "5612d3dae22d78b8",
         "name": "ENV",
-        "func": "let process_env = {\n    OPENAI_API: \"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\",\n \n}\n\nglobal.set(\"process_env\", process_env)\nreturn msg;\n\n",
+        "func": "let process_env = {\n    OPENAI_API: env.get(\"OPENAIAPI\")\n}\n\nglobal.set(\"process_env\", process_env)\nreturn msg;\n\n",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
